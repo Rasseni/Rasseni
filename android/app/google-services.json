@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "286699711215",
+    "project_id": "rasseni-8004a",
+    "storage_bucket": "rasseni-8004a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:286699711215:android:68beaf76f123596eea891a",
+        "android_client_info": {
+          "package_name": "com.rasseni.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClHOsTqAxdj4tD8D6-jhJoyT_11Vpkr4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

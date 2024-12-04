@@ -1,0 +1,56 @@
+name: Rasseni
+description: "Your dream career in the palm of your hand!."
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.2
+  firebase_core: ^3.8.0
+  icons_launcher: ^3.0.0
+  cloud_firestore: ^5.5.0
+  http: ^1.2.2
+  smooth_page_indicator: ^1.2.0+3
+  carousel_slider: ^5.0.0
+  image_picker: ^1.1.2
+  firebase_auth: ^5.3.3
+  shared_preferences: ^2.3.3
+  url_launcher: ^6.3.1
+  youtube_player_flutter: ^9.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/icons/
+    - assets/images/logo/
+    - assets/images/courses logo/
+    - assets/images/social media/
+    - assets/images/onboarding/
+
+  fonts:
+    - family: IBM Plex Sans
+      fonts:
+        - asset: assets/fonts/IBMPlexSans-Light.ttf
+          weight: 300
+        - asset: assets/fonts/IBMPlexSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/IBMPlexSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/IBMPlexSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/IBMPlexSans-Bold.ttf
+          weight: 700
