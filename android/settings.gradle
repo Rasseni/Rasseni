@@ -17,12 +17,14 @@ pluginManagement {
 }
 
 plugins {
+    // Updated AGP version to 8.2.1
+    id "com.android.application" version "8.2.1" apply false
+    // Flutter Plugin Loader
     id "dev.flutter.flutter-plugin-loader" version "1.0.0"
-    id "com.android.application" version "8.1.0" apply false
-    // START: FlutterFire Configuration
+    // FlutterFire Configuration
     id "com.google.gms.google-services" version "4.3.15" apply false
-    // END: FlutterFire Configuration
-    id "org.jetbrains.kotlin.android" version "1.8.22" apply false
+    // Kotlin Plugin
+    id "org.jetbrains.kotlin.android" version "1.9.10" apply false
 }
 
 include ":app"

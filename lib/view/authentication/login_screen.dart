@@ -1,7 +1,5 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../controller/profile_controller.dart';
 
 import 'signup_proccess/auth_email.dart';
 import '../../controller/auth_controller.dart';
@@ -18,7 +16,7 @@ class LoginScreen extends StatelessWidget {
     final double height = size.height;
 
     final _authController = Provider.of<AuthController>(context);
-    final _profileController = Provider.of<ProfileController>(context);
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -51,8 +49,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 // SizedBox(height: height * 0.007),
                 _buildPasswordField(_authController),
-                _buildTextResetPass(
-                    context, _authController, _profileController),
+                _buildTextResetPass(context, _authController),
                 SizedBox(height: height * 0.05),
                 _buildNextButton(
                   width,
@@ -61,7 +58,6 @@ class LoginScreen extends StatelessWidget {
                   _passwordController.text,
                   _authController,
                   context,
-                  _profileController,
                 ),
                 SizedBox(
                   height: height * 0.03,
@@ -154,14 +150,13 @@ class LoginScreen extends StatelessWidget {
     String password,
     AuthController _authController,
     BuildContext context,
-    ProfileController _profileController,
   ) {
     return Center(
       child: GestureDetector(
         onTap: () {
           _authController.setEmail(email);
           _authController.setPassword(password);
-          _authController.loginUser(context, _profileController);
+          _authController.loginUser(context);
         },
         child: Container(
           width: width * 0.5,
@@ -181,14 +176,14 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTextResetPass(BuildContext context,
-      AuthController _authController, ProfileController _profileController) {
+  Widget _buildTextResetPass(
+      BuildContext context, AuthController _authController) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         TextButton(
           onPressed: () {
-            _resetPassword(context, _authController, _profileController);
+            _resetPassword(context, _authController);
           },
           child: Text(
             "Forget password?",
@@ -232,7 +227,6 @@ class LoginScreen extends StatelessWidget {
   void _resetPassword(
     BuildContext context,
     AuthController _authController,
-    ProfileController _profileController,
   ) async {
     final _emailResetController = TextEditingController();
     showDialog(

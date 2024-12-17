@@ -1,14 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../controller/user_data_controller.dart';
 import '../model/app_style.dart';
 import 'streak_screen.dart';
 import '../controller/auth_controller.dart';
 import '../controller/image_pick_contoller.dart';
-import '../controller/profile_controller.dart';
-import 'done_courses.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
@@ -19,7 +20,7 @@ class ProfileScreen extends StatelessWidget {
     final double width = size.width;
     final double height = size.height;
 
-    final _profileController = Provider.of<ProfileController>(context);
+    final _userDataController = Provider.of<UserDataController>(context);
     final _imageController = Provider.of<ProfileImageController>(context);
     final _authController = Provider.of<AuthController>(context);
 
@@ -28,7 +29,7 @@ class ProfileScreen extends StatelessWidget {
         child: Stack(
           children: [
             _buildTopBar(height, width, _authController),
-            _buildProfileContent(context, _authController, _profileController,
+            _buildProfileContent(context, _authController, _userDataController,
                 _imageController, width, height),
           ],
         ),
@@ -81,7 +82,7 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildProfileContent(
       BuildContext context,
       AuthController _authController,
-      ProfileController _profileController,
+      UserDataController _userDataController,
       ProfileImageController _imageController,
       double width,
       double height) {
@@ -99,9 +100,10 @@ class ProfileScreen extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(height: height * 0.02),
-              _buildProfilePicture(_imageController, width, _profileController),
+              _buildProfilePicture(
+                  _imageController, _userDataController, width),
               _buildProfileInfo(
-                  context, _authController, _profileController, width),
+                  context, _authController, _userDataController, width),
               SizedBox(height: height * 0.02),
               _buildQuoteCard(width, height),
               SizedBox(height: height * 0.02),
@@ -116,7 +118,7 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildProfileInfo(BuildContext context, AuthController _authController,
-      ProfileController _profileController, double width) {
+      UserDataController _userDataController, double width) {
     return Padding(
       padding: EdgeInsets.only(left: 25, top: 10),
       child: Row(
@@ -130,7 +132,7 @@ class ProfileScreen extends StatelessWidget {
               SizedBox(
                 width: width * 0.6,
                 child: Text(
-                  "${_profileController.firstName} ${_profileController.lastName}",
+                  "${_userDataController.firstName} ${_userDataController.lastName}",
                   style: AppStyles.regular20(AppStyles.blackColor),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -143,7 +145,8 @@ class ProfileScreen extends StatelessWidget {
             padding: EdgeInsets.only(right: width * .06),
             child: GestureDetector(
               onTap: () {
-                _changeName(context, _authController, _profileController);
+                _changeName(context, _authController, _userDataController);
+                // _userDataController.printUsersTable();
               },
               child: Icon(AppStyles.edit, color: AppStyles.blueColor),
             ),
@@ -181,7 +184,7 @@ class ProfileScreen extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
-                style: AppStyles.medium20(AppStyles.whiteColor),
+                style: AppStyles.medium16(AppStyles.whiteColor),
               ),
             ),
             Align(
@@ -284,12 +287,10 @@ class ProfileScreen extends StatelessWidget {
   void _changeName(
     BuildContext context,
     AuthController _authController,
-    ProfileController _profileController,
+    UserDataController _userDataController,
   ) async {
-    final firstNameController =
-        TextEditingController(text: _profileController.firstName);
-    final lastNameController =
-        TextEditingController(text: _profileController.lastName);
+    final firstNameController = TextEditingController();
+    final lastNameController = TextEditingController();
 
     showDialog(
       context: context,
@@ -330,16 +331,15 @@ class ProfileScreen extends StatelessWidget {
               onPressed: () async {
                 final newFirstName = firstNameController.text.trim();
                 final newLastName = lastNameController.text.trim();
-
-                try {
-                  await _authController.updateUserName(
-                      _profileController, newFirstName, newLastName);
+                if (newFirstName.isNotEmpty && newLastName.isNotEmpty) {
+                  _authController.updateUserName(newFirstName, newLastName);
+                  _userDataController.updateName(newFirstName, newLastName);
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Name updated successfully!')));
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Can't update name")));
+                  _authController.showSnackBar(
+                      context, "Your name Changed ya $newFirstName 🤙");
+                } else {
+                  _authController.showSnackBar(context,
+                      "Can't update name.😔 , please try again later!");
                 }
               },
               child: const Text('Save'),
@@ -350,8 +350,11 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfilePicture(ProfileImageController _imageController,
-      double width, ProfileController _profileController) {
+  Widget _buildProfilePicture(
+    ProfileImageController _imageController,
+    UserDataController _userDataController,
+    double width,
+  ) {
     return Center(
       child: CircleAvatar(
         radius: width * 0.16,
@@ -359,13 +362,17 @@ class ProfileScreen extends StatelessWidget {
         child: CircleAvatar(
           radius: width * 0.15,
           backgroundColor: AppStyles.whiteColor,
-          child: _imageController.profileImage == null
+          child: _imageController.profileImage == null &&
+                  _userDataController.profilePic == null
               ? IconButton(
                   onPressed: () async {
-                    await _imageController.pickImage(_profileController);
+                    await _imageController.pickImage();
                   },
-                  icon: Icon(AppStyles.person,
-                      color: AppStyles.indigoColor, size: width * 0.2),
+                  icon: Icon(
+                    AppStyles.person,
+                    color: AppStyles.indigoColor,
+                    size: width * 0.2,
+                  ),
                 )
               : Stack(
                   children: [
@@ -373,7 +380,9 @@ class ProfileScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                          image: FileImage(_profileController.profileImage!),
+                          image: _imageController.profileImage == null
+                              ? FileImage(File(_userDataController.profilePic!))
+                              : FileImage(_imageController.profileImage!),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -382,7 +391,7 @@ class ProfileScreen extends StatelessWidget {
                       bottom: 0,
                       right: 0,
                       child:
-                          _buildEditIcon(_imageController, _profileController),
+                          _buildEditIcon(_imageController, _userDataController),
                     ),
                   ],
                 ),
@@ -391,8 +400,10 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEditIcon(ProfileImageController _imageController,
-      ProfileController _profileController) {
+  Widget _buildEditIcon(
+    ProfileImageController _imageController,
+    UserDataController _userDataController,
+  ) {
     return Container(
       height: 40,
       width: 40,
@@ -402,7 +413,8 @@ class ProfileScreen extends StatelessWidget {
       ),
       child: IconButton(
         onPressed: () async {
-          await _imageController.pickImage(_profileController);
+          // _userDataController.printUsersTable();
+          await _imageController.pickImage();
         },
         icon: Icon(AppStyles.edit, color: AppStyles.whiteColor, size: 25),
       ),

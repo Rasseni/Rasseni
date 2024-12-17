@@ -220,7 +220,7 @@ class AppStyles {
   static const IconData done = Icons.done_rounded;
   static const IconData badge = Icons.badge_rounded;
   static const IconData streak = Icons.local_fire_department;
-  static const IconData person = Icons.person;
+  static const IconData person = Icons.person_4_rounded;
 
   static final Map<String, Map<String, dynamic>> courseResources = {
     "C++": {

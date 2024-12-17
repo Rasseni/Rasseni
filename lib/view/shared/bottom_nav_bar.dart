@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../controller/bottom_nav_bar_controller.dart';
 import '../../model/app_style.dart';
+import '../chat_screen.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../home_screen.dart';
 import '../profile_screen.dart';
@@ -12,7 +13,7 @@ import '../profile_screen.dart';
 class BottomNavBar extends StatelessWidget {
   final List<Widget> _pages = [
     Homescreen(),
-    Dashboardscreen(),
+    ChatScreen(),
     Dashboardscreen(),
     ProfileScreen(),
   ];
@@ -115,44 +116,6 @@ class BottomNavBar extends StatelessWidget {
       },
     );
   }
-
-  // void _showComingSoonDialog(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => Dialog(
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(16),
-  //       ),
-  //       backgroundColor: AppStyles.darkGrayColor,
-  //       child: Padding(
-  //         padding: const EdgeInsets.all(20),
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             Text('Coming soon',
-  //                 style: AppStyles.bold20(
-  //                   AppStyles.blackColor,
-  //                 )),
-  //       SizedBox(height: 16),
-  // Text('We are preparing an awesome feature for you. Stay tuned.',
-  //     textAlign: TextAlign.center,
-  //     style: AppStyles.regular16(AppStyles.blackColor)),
-  //             const SizedBox(height: 24),
-  //             TextButton(
-  //               onPressed: () => Navigator.of(context).pop(),
-  //               style: TextButton.styleFrom(
-  //                 foregroundColor: AppStyles.blackColor,
-  //                 textStyle: TextStyle(
-  //                   fontSize: 16,
-  //                   fontWeight: FontWeight.w500,
-  //                 ),
-  //               ),
-  //               child: const Text('Done'),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 }
+
+

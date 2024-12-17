@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../controller/auth_controller.dart';
 
+import '../../../controller/auth_controller.dart';
 import '../../../controller/image_pick_contoller.dart';
-import '../../../controller/profile_controller.dart';
+import '../../../controller/user_data_controller.dart';
+
 import '../../../model/app_style.dart';
+
 import '../../shared/bottom_nav_bar.dart';
 
 class AuthProfile extends StatelessWidget {
@@ -19,8 +21,7 @@ class AuthProfile extends StatelessWidget {
 
     final _authController = Provider.of<AuthController>(context);
     final _imageController = Provider.of<ProfileImageController>(context);
-    final _profileController = Provider.of<ProfileController>(context);
-    final _userId = _authController.userId; // Access userId from provider
+    final _userDataController = Provider.of<UserDataController>(context);
 
     return Scaffold(
       body: SafeArea(
@@ -34,7 +35,8 @@ class AuthProfile extends StatelessWidget {
             children: [
               _buildHeaderText(),
               SizedBox(height: height * 0.03),
-              _buildProfilePicture(_imageController, width, _profileController),
+              _buildProfilePicture(
+                  _imageController, width, _userDataController),
               SizedBox(height: height * 0.04),
               _buildTextField(
                 "First Name",
@@ -51,7 +53,7 @@ class AuthProfile extends StatelessWidget {
               ),
               SizedBox(height: height * 0.04),
               _buildNextButton(width, height, _firstName.text, _lastName.text,
-                  _userId!, _profileController, context),
+                  _authController, context),
             ],
           ),
         ),
@@ -79,7 +81,7 @@ class AuthProfile extends StatelessWidget {
   }
 
   Widget _buildProfilePicture(ProfileImageController _imageProvider,
-      double width, ProfileController _profileController) {
+      double width, UserDataController _userDataController) {
     return Center(
       child: CircleAvatar(
         radius: width * 0.22,
@@ -90,7 +92,7 @@ class AuthProfile extends StatelessWidget {
           child: _imageProvider.profileImage == null
               ? IconButton(
                   onPressed: () async {
-                    await _imageProvider.pickImage(_profileController);
+                    await _imageProvider.pickImage();
                   },
                   icon: Icon(
                     AppStyles.person,
@@ -112,7 +114,7 @@ class AuthProfile extends StatelessWidget {
                     Positioned(
                       bottom: 0,
                       right: 0,
-                      child: _buildEditIcon(_imageProvider, _profileController),
+                      child: _buildEditIcon(_imageProvider),
                     ),
                   ],
                 ),
@@ -121,8 +123,9 @@ class AuthProfile extends StatelessWidget {
     );
   }
 
-  Widget _buildEditIcon(ProfileImageController _imageProvider,
-      ProfileController _profileController) {
+  Widget _buildEditIcon(
+    ProfileImageController _imageProvider,
+  ) {
     return Container(
       height: 45,
       width: 45,
@@ -132,8 +135,7 @@ class AuthProfile extends StatelessWidget {
       ),
       child: IconButton(
         onPressed: () async {
-          await _imageProvider.pickImage(
-              _profileController); // Pass authController to pickImage
+          await _imageProvider.pickImage();
         },
         icon: Icon(AppStyles.edit, color: Colors.white),
       ),
@@ -176,24 +178,13 @@ class AuthProfile extends StatelessWidget {
     );
   }
 
-  Widget _buildNextButton(
-      double width,
-      double height,
-      String firstName,
-      String lastName,
-      String _userId,
-      ProfileController _profileController,
-      BuildContext context) {
+  Widget _buildNextButton(double width, double height, String firstName,
+      String lastName, AuthController _authController, BuildContext context) {
     return Center(
       child: GestureDetector(
         onTap: () {
-          _profileController.setFirstName(firstName);
-          _profileController.setLastName(lastName);
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => BottomNavBar()),
-            (route) => false, // Removes all previous routes
-          );
+          _authController.saveUserData(
+              firstName: firstName, lastName: lastName, context: context);
         },
         child: Container(
           width: width * 0.5,

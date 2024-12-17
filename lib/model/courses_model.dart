@@ -1,4 +1,3 @@
-
 import 'course_item_model.dart';
 
 class CoursesModel {

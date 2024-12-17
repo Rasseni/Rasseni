@@ -70,8 +70,8 @@ class StreakScreen extends StatelessWidget {
       StreakContoller streakProvider, int index, double height, double width) {
     // Fetch styles for the current container
     final containerStyle = streakProvider.getContainerStyle(index);
-    final textSize = containerStyle['textSize'] as double;
-    final textColor = containerStyle['textColor'] as Color;
+    // final textSize = containerStyle['textSize'] as double;
+    // final textColor = containerStyle['textColor'] as Color;
     final iconColor = containerStyle['iconColor'] as Color;
 
     // Determine scale for active container

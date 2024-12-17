@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'controller/bottom_nav_bar_controller.dart';
 import 'firebase_options.dart';
 
+import 'controller/user_data_controller.dart';
 import 'controller/app_user_controller.dart';
 import 'controller/onboarding_controller.dart';
-import 'controller/profile_controller.dart';
 import 'controller/auth_controller.dart';
 import 'controller/streak_controller.dart';
 import 'controller/image_pick_contoller.dart';
-
+import 'controller/bottom_nav_bar_controller.dart';
 
 import 'model/app_style.dart';
+
 import 'view/onboardings_creen.dart';
 import 'view/shared/bottom_nav_bar.dart';
 
@@ -23,16 +23,15 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  final profileController = ProfileController();
-  await profileController.initialize();
 
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+            create: (_) => UserDataController()..loadUserData()),
         ChangeNotifierProvider(create: (_) => AppUser()),
         ChangeNotifierProvider(create: (_) => OnboardingController()),
         ChangeNotifierProvider(create: (_) => AuthController()),
-        ChangeNotifierProvider(create: (_) => ProfileController()),
         ChangeNotifierProvider(create: (_) => ProfileImageController()),
         ChangeNotifierProvider(create: (_) => BottomNavBarController()),
         ChangeNotifierProvider(create: (_) => StreakContoller()),
@@ -75,22 +74,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-/**
- kotlin 
- dart
- swift
- fkutter
- react 
- react native
- html
- css
- js
- c++
- c#
- pthon
- java
- mongo db
- php
- unity
- node.js
- */

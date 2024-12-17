@@ -18,7 +18,7 @@ class OnboardingScreen extends StatelessWidget {
       {
         "imageUrl": "assets/images/onboarding/onboarding1.png",
         "title": "Welcome to ",
-        "bluetitle": "Raseeni",
+        "bluetitle": "Rasseni",
         "description":
             "The first Educational/Smart study planner mobile app in Egypt.",
         "button": "Continue"
