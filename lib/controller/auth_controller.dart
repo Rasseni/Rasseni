@@ -13,7 +13,7 @@ class AuthController extends ChangeNotifier {
 
   final _userDataController = UserDataController();
 
-  SqlDb _sqlDb = SqlDb();
+  SqlDb _sqlDb = SqlDb.instance;
 
   String? _email;
   String? _password;

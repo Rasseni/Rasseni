@@ -2,31 +2,33 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class SqlDb {
+  static final SqlDb instance = SqlDb._internal(); // Singleton instance
   static Database? _db;
 
-  Future<Database?> get db async {
+  SqlDb._internal(); // Private constructor
+
+  Future<Database> get db async {
     if (_db == null) {
       _db = await initialDb();
-      return _db;
-    } else {
-      return _db;
     }
+    return _db!;
   }
 
-  initialDb() async {
-    String databasepath = await getDatabasesPath();
-    String path = join(databasepath, 'Rasseni.db');
+  Future<Database> initialDb() async {
+    String databasePath = await getDatabasesPath();
+    String path = join(databasePath, 'Rasseni.db');
     Database mydb = await openDatabase(
       path,
       onCreate: _onCreate,
       version: 1,
-      // onUpgrade: _onUpgrade,
     );
     return mydb;
   }
 
   _onCreate(Database db, int version) async {
     Batch batch = db.batch();
+
+    // Create `users` table
     batch.execute('''
     CREATE TABLE "users" (
       "id" INTEGER NOT NULL PRIMARY KEY,
@@ -36,6 +38,28 @@ class SqlDb {
       "profilePic" TEXT
     )
   ''');
+
+    // Create `courses` table
+    batch.execute('''
+    CREATE TABLE "courses" (
+      "id" TEXT PRIMARY KEY,
+      "name" TEXT,
+      "label" TEXT,
+      "image" TEXT
+      )
+    ''');
+
+    // Create `course_content` table
+    batch.execute('''
+    CREATE TABLE "course_content" (
+      "id" TEXT PRIMARY KEY,
+      "course_id" TEXT,
+      "title" TEXT,
+      "url" TEXT,
+      "length" TEXT,
+      FOREIGN KEY(course_id) REFERENCES courses(id) ON DELETE CASCADE
+      )
+    ''');
     await batch.commit();
     print("Create DATABASE AND TABLE ==========================");
   }
@@ -107,5 +131,53 @@ class SqlDb {
     String path = join(databasepath, 'Rasseni.db');
     await deleteDatabase(path);
     print("delete datebase =============");
+  }
+
+  //________________________________________________________________________________________
+
+  // Insert Course Data
+  Future insertCourse(String table, Map<String, Object?> values) async {
+    Database? mydb = await db;
+    int response = await mydb!.insert(table, values);
+    if (response > 0) {
+      print("====================== Done =========================");
+    } else {
+      print("====================== Error =========================");
+    }
+    return response;
+  }
+
+  // Update Course Data
+  Future updateCourse(
+      String table, Map<String, Object?> values, String courseId) async {
+    Database? mydb = await db;
+    int response = await mydb!.update(
+      table,
+      values,
+      where: 'courseId = ?',
+      whereArgs: [courseId],
+    );
+    if (response > 0) {
+      print("====================== Done =========================");
+    } else {
+      print("====================== Error =========================");
+    }
+    return response;
+  }
+
+  // Delete Course Data
+  Future<int> deleteCourse(String courseId) async {
+    Database? mydb = await db;
+    int response = await mydb!.delete(
+      'user_courses',
+      where: 'courseId = ?',
+      whereArgs: [courseId],
+    );
+    if (response > 0) {
+      print("====================== Done =========================");
+    } else {
+      print("====================== Error =========================");
+    }
+    return response;
   }
 }

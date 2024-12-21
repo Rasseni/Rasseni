@@ -21,7 +21,7 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    final double width = size.width;
+    // final double width = size.width;
     final double height = size.height;
 
     final _bottomNavBarController =
@@ -117,5 +117,3 @@ class BottomNavBar extends StatelessWidget {
     );
   }
 }
-
-

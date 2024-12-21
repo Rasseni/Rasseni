@@ -128,6 +128,11 @@ class AppStyles {
       fontSize: 14,
       fontFamily: 'IBM Plex Sans',
       fontWeight: FontWeight.w400);
+  static TextStyle regular10(Color c) => TextStyle(
+      color: c,
+      fontSize: 10,
+      fontFamily: 'IBM Plex Sans',
+      fontWeight: FontWeight.w400);
 
   static TextStyle medium40(Color c) => TextStyle(
       color: c,

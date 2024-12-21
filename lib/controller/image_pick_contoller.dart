@@ -8,7 +8,7 @@ import '../services/local_db.dart';
 import 'user_data_controller.dart';
 
 class ProfileImageController extends ChangeNotifier {
-  final SqlDb _sqlDb = SqlDb();
+  final SqlDb _sqlDb = SqlDb.instance;
 
   final _userDataController = UserDataController();
 

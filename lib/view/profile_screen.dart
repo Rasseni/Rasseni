@@ -146,7 +146,7 @@ class ProfileScreen extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 _changeName(context, _authController, _userDataController);
-                // _userDataController.printUsersTable();
+                _userDataController.printUsersTable();
               },
               child: Icon(AppStyles.edit, color: AppStyles.blueColor),
             ),

@@ -33,8 +33,8 @@ class StreakScreen extends StatelessWidget {
       actions: [
         Padding(
           padding: EdgeInsets.only(right: width * .02),
-          child: const Icon(
-            Icons.local_fire_department,
+          child:  Icon(
+            AppStyles.streak,
             size: 35,
           ),
         ),

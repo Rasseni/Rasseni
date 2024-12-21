@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/local_db.dart';
 
 class UserDataController extends ChangeNotifier {
-  SqlDb _sqlDb = SqlDb();
+  SqlDb _sqlDb = SqlDb.instance;
 
   String? id;
   String? firstName;
@@ -25,8 +25,19 @@ class UserDataController extends ChangeNotifier {
     notifyListeners(); // This ensures UI updates
   }
 
+  // void printUsersTable() async {
+  //   List<Map> data = await _sqlDb.read("users");
+  //   if (data.isEmpty) {
+  //     print("Users table is empty.");
+  //   } else {
+  //     print("Users table content:");
+  //     for (var user in data) {
+  //       print(user);
+  //     }
+  //   }
+  // }
   void printUsersTable() async {
-    List<Map> data = await _sqlDb.read("users");
+    List<Map> data = await _sqlDb.read("courses");
     if (data.isEmpty) {
       print("Users table is empty.");
     } else {

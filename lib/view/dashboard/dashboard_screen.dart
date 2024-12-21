@@ -2,6 +2,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../controller/course_controller.dart';
 import '../../view/home_screen.dart';
 import '../../model/app_style.dart';
 
@@ -49,13 +51,15 @@ class Dashboardscreen extends StatelessWidget {
     final double width = size.width;
     final double height = size.height;
     double progressPercentage = 70;
+    final _courseController = Provider.of<CourseController>(context);
 
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             _buildAppBar(height, width),
-            _buildProgressCard(width, height, progressPercentage, context),
+            _buildProgressCard(
+                width, height, progressPercentage, _courseController, context),
             SizedBox(height: height * 0.01),
             _buildSectionTitle("Explore", width),
             _buildExploreList(width, height),
@@ -108,8 +112,12 @@ class Dashboardscreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressCard(double width, double height,
-      double progressPercentage, BuildContext context) {
+  Widget _buildProgressCard(
+      double width,
+      double height,
+      double progressPercentage,
+      CourseController _courseController,
+      BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: width * 0.03),
       child: Container(

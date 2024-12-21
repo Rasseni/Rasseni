@@ -25,6 +25,7 @@ dependencies:
   youtube_player_flutter: ^9.1.1
   sqflite: ^2.3.2
   path_provider: ^2.1.5
+  shared_preferences: ^2.3.4
 
 dev_dependencies:
   flutter_test:

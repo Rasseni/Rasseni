@@ -1,17 +1,19 @@
+import 'package:Rasseni/controller/progress_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+
 import 'firebase_options.dart';
 
 import 'controller/user_data_controller.dart';
-import 'controller/app_user_controller.dart';
 import 'controller/onboarding_controller.dart';
 import 'controller/auth_controller.dart';
 import 'controller/streak_controller.dart';
 import 'controller/image_pick_contoller.dart';
 import 'controller/bottom_nav_bar_controller.dart';
+import 'controller/course_controller.dart';
 
 import 'model/app_style.dart';
 
@@ -29,12 +31,16 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(
             create: (_) => UserDataController()..loadUserData()),
-        ChangeNotifierProvider(create: (_) => AppUser()),
+        ChangeNotifierProvider(
+            create: (_) => CourseController()
+              ..fetchAvailableCourses()
+              ..fetchUserCourses()),
         ChangeNotifierProvider(create: (_) => OnboardingController()),
         ChangeNotifierProvider(create: (_) => AuthController()),
         ChangeNotifierProvider(create: (_) => ProfileImageController()),
         ChangeNotifierProvider(create: (_) => BottomNavBarController()),
         ChangeNotifierProvider(create: (_) => StreakContoller()),
+        ChangeNotifierProvider(create: (_) => ProgressController()),
       ],
       child: MyApp(),
     ),

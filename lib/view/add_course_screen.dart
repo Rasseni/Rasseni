@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../controller/app_user_controller.dart';
+
+import '../controller/course_controller.dart';
 import '../model/app_style.dart';
 
 class AddCourseScreen extends StatelessWidget {
@@ -11,62 +12,60 @@ class AddCourseScreen extends StatelessWidget {
     final Size size = MediaQuery.of(context).size;
     final double width = size.width;
     final double height = size.height;
+    final _courseController =
+        Provider.of<CourseController>(context);
     return Scaffold(
-      body: Consumer<AppUser>(
-        builder: (context, user, child) {
-          return SafeArea(
-            child: Column(
-              children: [
-                _buildAppBar(height, width),
-                Expanded(
-                  child: SizedBox(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: ListView.builder(
-                          itemCount: user.theCoursesList.length,
-                          itemBuilder: (context, index) {
-                            return Card(
-                                margin: EdgeInsets.symmetric(vertical: 10),
-                                color: AppStyles.maybeBlueColor,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(35))),
-                                child: Container(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 16.0),
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.15,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        user.theCoursesList[index].name,
-                                        style: AppStyles.semiBold24(
-                                            AppStyles.whiteColor),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(
-                                          Icons.add,
-                                          size: 24,
-                                          color: AppStyles.whiteColor,
-                                        ),
-                                        onPressed: () {
-                                          user.addCourse(
-                                              user.theCoursesList[index]);
-                                        },
-                                      )
-                                    ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildAppBar(height, width),
+            Expanded(
+              child: SizedBox(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: ListView.builder(
+                      itemCount: _courseController.availableCourses.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                            margin: EdgeInsets.symmetric(vertical: 10),
+                            color: AppStyles.maybeBlueColor,
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(35))),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 16.0),
+                              height: MediaQuery.of(context).size.height * 0.15,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    _courseController
+                                        .availableCourses[index].name,
+                                    style: AppStyles.semiBold24(
+                                        AppStyles.whiteColor),
                                   ),
-                                ));
-                          }),
-                    ),
-                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.add,
+                                      size: 24,
+                                      color: AppStyles.whiteColor,
+                                    ),
+                                    onPressed: () {
+                                      _courseController.addCourse(
+                                          _courseController
+                                              .availableCourses[index]);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ));
+                      }),
                 ),
-              ],
+              ),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }
