@@ -1,6 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../controller/course_controller.dart';
 import '../controller/progress_controller.dart';
 import '../model/course_item_model.dart';
 import '../model/app_style.dart';
@@ -54,7 +54,7 @@ class TheCoursesScreen extends StatelessWidget {
 
   Widget _buildAppBar(double width, double height, BuildContext context) {
     return Container(
-      height: height * 0.09,
+      height: height * 0.1,
       color: color,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,11 +68,12 @@ class TheCoursesScreen extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: height * 0.01),
+                  SizedBox(height: height * 0.007),
                   Text(courseName,
                       style: AppStyles.semiBold24(AppStyles.whiteColor)),
                   SizedBox(
                     width: width * 0.6,
+                    height: height * 0.03,
                     child: Text(
                       courseLabel,
                       style: AppStyles.regular16(AppStyles.whiteColor),
@@ -110,8 +111,9 @@ class TheCoursesScreen extends StatelessWidget {
       child: Column(
         children: [
           Stepper(
-            physics: const ClampingScrollPhysics(),
-            currentStep: _progressController.currentStep,
+            physics: ClampingScrollPhysics(),
+            // currentStep: _progressController.currentStep,
+
             controlsBuilder: (context, details) => const SizedBox.shrink(),
             steps: List.generate(
                 courseLessons.length,
@@ -122,6 +124,7 @@ class TheCoursesScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               _progressController.onContinueTap(courseId);
+              print(_progressController.currentStep);
             },
             child: Text(
               'Continue',
@@ -154,8 +157,8 @@ class TheCoursesScreen extends StatelessWidget {
           }
         },
         child: Container(
-          margin: const EdgeInsets.only(top: 16.0),
-          padding: const EdgeInsets.only(left: 16.0),
+          margin: EdgeInsets.only(top: 16.0),
+          padding: EdgeInsets.only(left: 16.0),
           width: double.infinity,
           height: height * 0.15,
           decoration: BoxDecoration(
@@ -196,21 +199,31 @@ class TheCoursesScreen extends StatelessWidget {
   }
 
   void _showLockedLessonDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text("Lesson Locked"),
-        content: const Text(
-            "You need to complete the previous lesson to unlock this one."),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
+    showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text(
+              'Lesson Locked',
+              style: AppStyles.bold20(AppStyles.blackColor),
+            ),
+            content: Text(
+                "You need to complete the previous lesson to unlock this one.",
+                textAlign: TextAlign.center,
+                style: AppStyles.regular16(AppStyles.blackColor)),
+            actions: [
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  "Ok",
+                  style: AppStyles.bold15(AppStyles.blackColor),
+                ),
+              ),
+            ],
+          );
+        });
   }
 }

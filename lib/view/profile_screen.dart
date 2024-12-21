@@ -97,20 +97,22 @@ class ProfileScreen extends StatelessWidget {
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: width * 0.03),
-          child: Column(
-            children: [
-              SizedBox(height: height * 0.02),
-              _buildProfilePicture(
-                  _imageController, _userDataController, width),
-              _buildProfileInfo(
-                  context, _authController, _userDataController, width),
-              SizedBox(height: height * 0.02),
-              _buildQuoteCard(width, height),
-              SizedBox(height: height * 0.02),
-              _buildActionButtons(context, width, height),
-              SizedBox(height: height * 0.02),
-              _buildSocialMediaLinks(height, width),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: height * 0.02),
+                _buildProfilePicture(
+                    _imageController, _userDataController, width),
+                _buildProfileInfo(
+                    context, _authController, _userDataController, width),
+                SizedBox(height: height * 0.02),
+                _buildQuoteCard(width, height),
+                SizedBox(height: height * 0.02),
+                _buildActionButtons(context, width, height),
+                SizedBox(height: height * 0.02),
+                _buildSocialMediaLinks(height, width),
+              ],
+            ),
           ),
         ),
       ),
