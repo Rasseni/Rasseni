@@ -31,10 +31,10 @@ class TheCoursesScreen extends StatelessWidget {
     final _progressController = Provider.of<ProgressController>(context);
 
     // Initialize progress controller with lesson count
-    _progressController.initializeSteps(courseLessons.length);
+    _progressController.initializeSteps(courseId, courseLessons.length);
 
     // Load progress if needed
-    _progressController.loadProgress(courseId, courseLessons.length);
+    _progressController.loadProgress();
 
     return Scaffold(
       body: SafeArea(
@@ -99,7 +99,9 @@ class TheCoursesScreen extends StatelessWidget {
     return LinearProgressIndicator(
       color: AppStyles.greenColor,
       backgroundColor: AppStyles.grayColor,
-      value: _progressController.progress / 100,
+      value: _progressController.getCourseProgress(
+              courseId, courseLessons.length) /
+          100,
       minHeight: height * 0.045,
     );
   }
@@ -112,30 +114,12 @@ class TheCoursesScreen extends StatelessWidget {
         children: [
           Stepper(
             physics: ClampingScrollPhysics(),
-            // currentStep: _progressController.currentStep,
-
+            currentStep: _progressController.currentSteps[courseId] ?? 0,
             controlsBuilder: (context, details) => const SizedBox.shrink(),
             steps: List.generate(
                 courseLessons.length,
                 (index) =>
                     _buildStep(index, _progressController, context, height)),
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              _progressController.onContinueTap(courseId);
-              print(_progressController.currentStep);
-            },
-            child: Text(
-              'Continue',
-              style: AppStyles.semiBold32(AppStyles.whiteColor),
-            ),
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(35)),
-              minimumSize: Size(double.infinity, height * 0.1),
-              backgroundColor: AppStyles.greenColor,
-            ),
           ),
         ],
       ),
@@ -144,8 +128,10 @@ class TheCoursesScreen extends StatelessWidget {
 
   Step _buildStep(int index, ProgressController _progressController,
       BuildContext context, double height) {
-    final isAccessible = _progressController.isLessonAccessible(index);
-    final isCompleted = _progressController.completedSteps[index];
+    final isAccessible =
+        _progressController.isLessonAccessible(courseId, index);
+    final isCompleted =
+        _progressController.courseProgress[courseId]?[index] ?? false;
 
     return Step(
       title: GestureDetector(
@@ -179,7 +165,7 @@ class TheCoursesScreen extends StatelessWidget {
         ),
       ),
       content: Container(),
-      isActive: _progressController.currentStep >= index,
+      isActive: (_progressController.currentSteps[courseId] ?? -1) >= index,
       state: isCompleted ? StepState.complete : StepState.indexed,
     );
   }
@@ -193,6 +179,7 @@ class TheCoursesScreen extends StatelessWidget {
           title: courseLessons[index].title,
           itemId: courseLessons[index].id,
           courseId: courseId,
+          courseLessons: courseLessons,
         ),
       ),
     );
@@ -200,30 +187,31 @@ class TheCoursesScreen extends StatelessWidget {
 
   void _showLockedLessonDialog(BuildContext context) {
     showCupertinoDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CupertinoAlertDialog(
-            title: Text(
-              'Lesson Locked',
-              style: AppStyles.bold20(AppStyles.blackColor),
-            ),
-            content: Text(
-                "You need to complete the previous lesson to unlock this one.",
-                textAlign: TextAlign.center,
-                style: AppStyles.regular16(AppStyles.blackColor)),
-            actions: [
-              CupertinoDialogAction(
-                isDefaultAction: true,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  "Ok",
-                  style: AppStyles.bold15(AppStyles.blackColor),
-                ),
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(
+            'Lesson Locked',
+            style: AppStyles.bold20(AppStyles.blackColor),
+          ),
+          content: Text(
+              "You need to complete the previous lesson to unlock this one.",
+              textAlign: TextAlign.center,
+              style: AppStyles.regular16(AppStyles.blackColor)),
+          actions: [
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "Ok",
+                style: AppStyles.bold15(AppStyles.blackColor),
               ),
-            ],
-          );
-        });
+            ),
+          ],
+        );
+      },
+    );
   }
 }

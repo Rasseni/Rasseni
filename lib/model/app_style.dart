@@ -229,11 +229,11 @@ class AppStyles {
 
   static final Map<String, Map<String, dynamic>> courseResources = {
     "C++": {
-      "color": AppStyles.redColor,
+      "color": AppStyles.yellowColor,
       "image": AppStyles.cPlusPlus,
     },
     "Python": {
-      "color": AppStyles.yellowColor,
+      "color": AppStyles.greenColor,
       "image": AppStyles.python,
     },
     "React": {
@@ -241,7 +241,7 @@ class AppStyles {
       "image": AppStyles.react,
     },
     "Flutter": {
-      "color": AppStyles.orangeColor,
+      "color": AppStyles.maybeCyan,
       "image": AppStyles.flutter,
     },
     "Dart": {
@@ -273,7 +273,7 @@ class AppStyles {
       "image": AppStyles.html,
     },
     "CSS": {
-      "color": AppStyles.maybeCyan,
+      "color": AppStyles.roseColor,
       "image": AppStyles.css,
     },
     "MySQL": {
@@ -293,11 +293,11 @@ class AppStyles {
       "image": AppStyles.php,
     },
     "Node.js": {
-      "color": AppStyles.maybeCyan,
+      "color": AppStyles.indigoColor,
       "image": AppStyles.nodeJs,
     },
     "MongoDB": {
-      "color": AppStyles.orangeColor,
+      "color": AppStyles.darkOrangeColor,
       "image": AppStyles.mongodb,
     },
   };

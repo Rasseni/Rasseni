@@ -106,7 +106,7 @@ class Homescreen extends StatelessWidget {
                     style: AppStyles.regular24(AppStyles.whiteColor)),
                 Row(
                   children: [
-                    Text('4', style: AppStyles.bold32(AppStyles.whiteColor)),
+                    Text('1', style: AppStyles.bold32(AppStyles.whiteColor)),
                     SizedBox(width: 4),
                     Icon(AppStyles.streak,
                         color: AppStyles.whiteColor, size: 35),
@@ -320,10 +320,11 @@ class Homescreen extends StatelessWidget {
               course.name,
               course.label,
               AppStyles.courseResources[course.name]?['image'],
-              // _courseController.getProgress(course.id).toInt(),
-              _progressController.progress.isNaN
-                  ? 0
-                  : _progressController.progress,
+              _progressController.getCourseProgress(
+                  course.id, course.content.length),
+              // _progressController.progress.isNaN
+              //     ? 0
+              //     : _progressController.progress,
               AppStyles.courseResources[course.name]?['color'],
             ),
           );

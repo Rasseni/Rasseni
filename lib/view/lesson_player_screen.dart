@@ -4,12 +4,14 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../controller/progress_controller.dart';
 import '../model/app_style.dart';
+import '../model/course_item_model.dart';
 
 class LessonPlayerScreen extends StatelessWidget {
   final String videoUrl;
   final String title;
   final String courseId;
   final String itemId;
+  final List<CourseItem> courseLessons;
 
   const LessonPlayerScreen({
     super.key,
@@ -17,6 +19,7 @@ class LessonPlayerScreen extends StatelessWidget {
     required this.title,
     required this.courseId,
     required this.itemId,
+    required this.courseLessons,
   });
 
   @override
@@ -55,7 +58,7 @@ class LessonPlayerScreen extends StatelessWidget {
               YoutubePlayer(
                 controller: YoutubePlayerController(
                   initialVideoId: videoId,
-                  flags: const YoutubePlayerFlags(
+                  flags: YoutubePlayerFlags(
                     autoPlay: true,
                     mute: false,
                   ),
@@ -77,6 +80,8 @@ class LessonPlayerScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Mark this lesson as complete
+                  _progressController.initializeSteps(
+                      courseId, courseLessons.length);
                   _progressController.onContinueTap(courseId);
                   Navigator.pop(context);
                 },
