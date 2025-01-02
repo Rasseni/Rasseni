@@ -1,65 +1,30 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controller/course_controller.dart';
+import '../../controller/progress_controller.dart';
 import '../../view/home_screen.dart';
 import '../../model/app_style.dart';
 
 class Dashboardscreen extends StatelessWidget {
-  final List<Map<String, dynamic>> explore = [
-    {
-      'title': 'Soft Skill',
-      'icon': AppStyles.skills,
-    },
-    {
-      'title': 'Project Ideas',
-      'icon': AppStyles.project,
-    },
-    {
-      'title': 'About Hardware',
-      'icon': AppStyles.hardware,
-    },
-    {
-      'title': 'Software Trends',
-      'icon': AppStyles.trends,
-    },
-  ];
-
-  final List<Map<String, dynamic>> codingVocab = [
-    {
-      'title': 'Git',
-      'subtitle': 'Commandes',
-      'icon': AppStyles.git,
-    },
-    {
-      'title': 'Main',
-      'subtitle': 'References',
-      'icon': AppStyles.main,
-    },
-    {
-      'title': 'Coding',
-      'subtitle': 'References',
-      'icon': AppStyles.coding,
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     final double width = size.width;
     final double height = size.height;
-    double progressPercentage = 70;
     final _courseController = Provider.of<CourseController>(context);
+    final _progressController = Provider.of<ProgressController>(context);
+
+    // Get the top 3 courses with the highest progress
+    final topCourses = _progressController.getTopCourses(
+        _courseController, _progressController);
 
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             _buildAppBar(height, width),
-            _buildProgressCard(
-                width, height, progressPercentage, _courseController, context),
+            _buildProgressCard(width, height, topCourses, context),
             SizedBox(height: height * 0.01),
             _buildSectionTitle("Explore", width),
             _buildExploreList(width, height),
@@ -69,6 +34,221 @@ class Dashboardscreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildProgressCard(double width, double height,
+      List<Map<String, dynamic>> topCourses, BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: width * 0.03),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppStyles.whiteColor,
+          borderRadius: BorderRadius.circular(35),
+        ),
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: width * 0.02,
+            right: width * 0.01,
+            top: height * 0.03,
+            bottom: height * 0.02,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Left side: Highest progress course
+                  if (topCourses.isNotEmpty)
+                    _buildMainCourseCard(topCourses[0], width, height),
+                  // SizedBox(width: width * 0.1),
+
+                  // Right side: Second and third highest courses
+                  if (topCourses.length > 1)
+                    Column(
+                      children: [
+                        _buildSecondaryCourseCard(topCourses[1], width, height),
+                        SizedBox(height: height * 0.02),
+                        if (topCourses.length > 2)
+                          _buildSecondaryCourseCard(
+                              topCourses[2], width, height),
+                      ],
+                    ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: width * 0.45,
+                    child: Text(
+                        'You have ${topCourses.length}\ncourses running now.',
+                        style: AppStyles.bold18(AppStyles.blackColor)),
+                  ),
+                  _buildViewAllButton(width, height, context),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMainCourseCard(
+      Map<String, dynamic> course, double width, double height) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 100,
+          width: 100,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              CircularProgressIndicator(
+                strokeCap: StrokeCap.round,
+                value: course['progress'] / 100,
+                strokeWidth: 20,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppStyles.courseResources[course['title']]?['color'],
+                ),
+                backgroundColor: AppStyles.blackColor,
+              ),
+              Center(
+                child: Text(
+                  '${course['progress'].toInt()}',
+                  style: TextStyle(
+                    fontFamily: 'IBM Plex Sans',
+                    fontSize: 45,
+                    fontWeight: FontWeight.w700,
+                    color: AppStyles.courseResources[course['title']]?['color'],
+                    letterSpacing: -2,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: height * 0.02),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: width * 0.3,
+              child: Text(
+                course['title'],
+                style: AppStyles.bold24(AppStyles.blackColor),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            SizedBox(
+              width: width * 0.3,
+              child: Text(
+                course['subtitle'],
+                style: AppStyles.regular20(AppStyles.blackColor),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSecondaryCourseCard(
+      Map<String, dynamic> course, double width, double height) {
+    return Padding(
+      padding: EdgeInsets.only(right: width * 0.05, bottom: height * 0.02),
+      child: Row(
+        children: [
+          SizedBox(
+            height: 70,
+            width: 70,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                CircularProgressIndicator(
+                  strokeCap: StrokeCap.round,
+                  value: course['progress'] / 100,
+                  strokeWidth: 15,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppStyles.courseResources[course['title']]?['color'],
+                  ),
+                  backgroundColor: AppStyles.blackColor,
+                ),
+                Center(
+                  child: Text(
+                    '${course['progress'].toInt()}',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w700,
+                      color: AppStyles.courseResources[course['title']]
+                          ?['color'],
+                      letterSpacing: -1,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: width * 0.03),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: width * 0.2,
+                child: Text(course['title'],
+                    style: AppStyles.semiBold16(AppStyles.blackColor)),
+              ),
+              SizedBox(
+                width: width * 0.2,
+                child: Text(
+                  course['subtitle'],
+                  style: AppStyles.regular14(AppStyles.blackColor),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildViewAllButton(
+      double width, double height, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => Homescreen(),
+              ),
+            );
+          },
+          child: Container(
+            width: width * 0.45,
+            height: height * 0.055,
+            decoration: BoxDecoration(
+              color: AppStyles.orangeColor,
+              borderRadius: BorderRadius.circular(35),
+            ),
+            child: Center(
+              child: Text("View All",
+                  style: AppStyles.bold15(AppStyles.whiteColor)),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -92,7 +272,7 @@ class Dashboardscreen extends StatelessWidget {
               height: height * 0.08,
               child: Image.asset(
                 AppStyles.logoWithoutBackground,
-                fit: BoxFit.cover, // Ensure it scales nicely
+                fit: BoxFit.cover,
               ),
             ),
           ),
@@ -112,177 +292,6 @@ class Dashboardscreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressCard(
-      double width,
-      double height,
-      double progressPercentage,
-      CourseController _courseController,
-      BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: width * 0.03),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppStyles.whiteColor,
-          borderRadius: BorderRadius.circular(35),
-        ),
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: width * 0.02,
-            right: width * 0.01,
-            top: height * 0.03,
-            bottom: height * 0.02,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  _buildProgressIndicator(progressPercentage, height),
-                  SizedBox(width: width * 0.1),
-                  _buildProgressDetails(height, width),
-                ],
-              ),
-              SizedBox(height: height * 0.03),
-              _buildViewAllButton(width, height, context),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProgressIndicator(double progressPercentage, double height) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 100,
-          width: 100,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              CircularProgressIndicator(
-                strokeCap: StrokeCap.round,
-                value: progressPercentage / 100,
-                strokeWidth: 20,
-                valueColor:
-                    AlwaysStoppedAnimation<Color>(AppStyles.yellowColor),
-                backgroundColor: AppStyles.blackColor,
-              ),
-              Center(
-                child: Text(
-                  '${progressPercentage.toInt()}',
-                  style: TextStyle(
-                    fontFamily: 'IBM Plex Sans',
-                    fontSize: 38,
-                    fontWeight: FontWeight.w700,
-                    color: AppStyles.yellowColor,
-                    letterSpacing: -2,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: height * 0.02),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text('Web dev', style: AppStyles.bold20(AppStyles.blackColor)),
-            Text('Master Class',
-                style: AppStyles.regular20(AppStyles.blackColor)),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildProgressDetails(double height, double width) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        _buildProgressIndicatorWithColor(
-            70, 71, AppStyles.indigoColor, AppStyles.blackColor, width),
-        SizedBox(height: height * 0.04),
-        _buildProgressIndicatorWithColor(
-            20, 71, AppStyles.greenColor, AppStyles.blackColor, width),
-      ],
-    );
-  }
-
-  Widget _buildProgressIndicatorWithColor(
-    int progressPercentage,
-    double size,
-    Color valueColor,
-    Color backgroundColor,
-    double width,
-  ) {
-    return Row(
-      children: [
-        SizedBox(
-          height: size,
-          width: size,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              CircularProgressIndicator(
-                strokeCap: StrokeCap.round,
-                value: progressPercentage / 100,
-                strokeWidth: 10,
-                valueColor: AlwaysStoppedAnimation<Color>(valueColor),
-                backgroundColor: backgroundColor,
-              ),
-              Center(
-                child: Text('${progressPercentage.toInt()}',
-                    style: AppStyles.bold24(valueColor)),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(width: width * 0.03),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Mobile Dev", style: AppStyles.bold15(AppStyles.blackColor)),
-            Text("Master Class",
-                style: AppStyles.regular15(AppStyles.blackColor)),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildViewAllButton(
-      double width, double height, BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) => Homescreen(),
-              ),
-            );
-          },
-          child: Container(
-            width: width * 0.5,
-            height: height * 0.055,
-            decoration: BoxDecoration(
-              color: AppStyles.orangeColor,
-              borderRadius: BorderRadius.circular(35),
-            ),
-            child: Center(
-              child: Text("View All",
-                  style: AppStyles.bold15(AppStyles.whiteColor)),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildSectionTitle(String title, double width) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: width * 0.03),
@@ -294,6 +303,13 @@ class Dashboardscreen extends StatelessWidget {
   }
 
   Widget _buildExploreList(double width, double height) {
+    final List<Map<String, dynamic>> explore = [
+      {'title': 'Soft Skill', 'icon': AppStyles.skills},
+      {'title': 'Project Ideas', 'icon': AppStyles.project},
+      {'title': 'About Hardware', 'icon': AppStyles.hardware},
+      {'title': 'Software Trends', 'icon': AppStyles.trends},
+    ];
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: width * 0.03),
       child: SizedBox(
@@ -313,6 +329,12 @@ class Dashboardscreen extends StatelessWidget {
   }
 
   Widget _buildCodingVocabList(double width, double height) {
+    final List<Map<String, dynamic>> codingVocab = [
+      {'title': 'Git', 'subtitle': 'Commandes', 'icon': AppStyles.git},
+      {'title': 'Main', 'subtitle': 'References', 'icon': AppStyles.main},
+      {'title': 'Coding', 'subtitle': 'References', 'icon': AppStyles.coding},
+    ];
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: width * 0.03),
       child: SizedBox(

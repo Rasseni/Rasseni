@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// import '../controller/app_user_controller.dart';
 import '../controller/course_controller.dart';
 import '../controller/progress_controller.dart';
 import '../model/app_style.dart';
@@ -134,8 +134,6 @@ class Homescreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // _buildProgressCard(width, height, context),
-              SizedBox(height: height * 0.02),
               _buildCourseGrid(
                   width, height, _courseController, _progressController),
             ],
@@ -145,132 +143,18 @@ class Homescreen extends StatelessWidget {
     );
   }
 
-  // Widget _buildProgressCard(double width, double height, BuildContext context) {
-  //   return Consumer<AppUser>(
-  //     builder: (context, myProvider, child) {
-  //       if (myProvider.myCoursesList.isEmpty) {
-  //         return Center(
-  //           child: Text(
-  //             "No courses added yet!",
-  //             style: AppStyles.regular24(AppStyles.blackColor),
-  //           ),
-  //         );
-  //       }
-
-  //       // Add this check to ensure the list is not empty before accessing the first item
-  //       if (myProvider.myCoursesList.isNotEmpty) {
-  //         // Use the first course safely
-  //         return GestureDetector(
-  //           child: Card(
-  //               // Existing code for the card...
-  //               ),
-  //         );
-  //       }
-
-  //       return GestureDetector(
-  //         child: Card(
-  //           elevation: 20,
-  //           color: AppStyles.yellowColor,
-  //           shape: RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.circular(35),
-  //           ),
-  //           child: Padding(
-  //             padding: EdgeInsets.only(
-  //                 left: width * 0.07,
-  //                 top: height * 0.03,
-  //                 bottom: height * 0.02),
-  //             child: Column(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 Row(
-  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                   children: [
-  //                     SizedBox(
-  //                       height: 100,
-  //                       width: 100,
-  //                       child: Stack(
-  //                         fit: StackFit.expand,
-  //                         children: [
-  //                           CircularProgressIndicator(
-  //                             strokeCap: StrokeCap.round,
-  //                             value: myProvider
-  //                                 .getProgress(myProvider.myCoursesList[0].id),
-  //                             strokeWidth: 20,
-  //                             valueColor: AlwaysStoppedAnimation<Color>(
-  //                                 AppStyles.whiteColor),
-  //                             backgroundColor: AppStyles.blackColor,
-  //                           ),
-  //                           Center(
-  //                             child: Text(
-  //                                 '${myProvider.getProgress(myProvider.myCoursesList[0].id).toInt()}',
-  //                                 style:
-  //                                     AppStyles.bold48(AppStyles.whiteColor)),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                     Container(
-  //                       height: height * 0.05,
-  //                       width: width * 0.25,
-  //                       decoration: BoxDecoration(
-  //                         color: AppStyles.indigoColor,
-  //                         borderRadius: BorderRadius.only(
-  //                           topLeft: Radius.circular(35),
-  //                           bottomLeft: Radius.circular(35),
-  //                         ),
-  //                       ),
-  //                       child: Center(
-  //                         child: Text("Continue",
-  //                             style: AppStyles.bold12(
-  //                               AppStyles.whiteColor,
-  //                             )),
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 SizedBox(height: height * 0.04),
-  //                 Row(
-  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                   children: [
-  //                     Column(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: [
-  //                         Text(
-  //                           myProvider.myCoursesList[0].name,
-  //                           style: AppStyles.bold32(AppStyles.blackColor),
-  //                         ),
-  //                         Text('Master Class',
-  //                             style: AppStyles.regular32(AppStyles.blackColor)),
-  //                       ],
-  //                     ),
-  //                     SizedBox(
-  //                         height: height * 0.1,
-  //                         child: Text(
-  //                           'Harvard',
-  //                           style: AppStyles.medium24(AppStyles.blackColor),
-  //                         )),
-  //                   ],
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
   Widget _buildCourseGrid(
     double width,
     double height,
     CourseController _courseController,
     ProgressController _progressController,
   ) {
+    // Sort courses by progress in descending order
+    final sortedCourses = _courseController.getSortedCourses(
+        _courseController, _progressController);
+
     return Padding(
       padding: EdgeInsets.only(bottom: height * .06),
-
-      // Ensure there's at least one item to skip
-
       child: GridView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
@@ -281,51 +165,67 @@ class Homescreen extends StatelessWidget {
           childAspectRatio: 0.85,
         ),
         // Add +1 to include the "Add Card"
-        itemCount: _courseController.userCourses.isEmpty
-            ? 1
-            : _courseController.userCourses.length + 1,
-
+        itemCount: sortedCourses.isEmpty ? 1 : sortedCourses.length + 1,
         itemBuilder: (context, index) {
-          final itemCount = _courseController.userCourses.length > 1
-              ? _courseController
-                  .userCourses.length // Show courses and "Add Card"
-              : 1; // Show only "Add Card" if no courses are available
           // If the list is empty or this is the last item, show the "Add Card"
-          if (_courseController.userCourses.isEmpty ||
-              index == _courseController.userCourses.length) {
+          if (sortedCourses.isEmpty || index == sortedCourses.length) {
             return _addCard(height, width, context, _courseController);
           }
 
           // Safe access for courses
-          final course = _courseController.userCourses[index];
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
+          final course = sortedCourses[index];
+          return Dismissible(
+            key: Key(course.id),
+            direction: DismissDirection.endToStart,
+            background: Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.red,
+              ),
+              child: Icon(
+                AppStyles.delete, // Your custom delete icon
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
+            confirmDismiss: (direction) async {
+              // Show your custom delete dialog
+              final bool? shouldDelete = await _showDeleteDialog(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => TheCoursesScreen(
-                    courseLessons: course.content,
-                    courseName: course.name,
-                    courseId: course.id,
-                    courseLabel: course.label,
-                    icon: AppStyles.courseResources[course.name]?['image'],
-                    color: AppStyles.courseResources[course.name]?['color'],
-                  ),
-                ),
+                _courseController,
+                course.id,
               );
+
+              // Return true to dismiss, false to cancel, or null to keep the card swiped
+              return shouldDelete;
             },
-            child: _courseCard(
-              height,
-              width,
-              course.name,
-              course.label,
-              AppStyles.courseResources[course.name]?['image'],
-              _progressController.getCourseProgress(
-                  course.id, course.content.length),
-              // _progressController.progress.isNaN
-              //     ? 0
-              //     : _progressController.progress,
-              AppStyles.courseResources[course.name]?['color'],
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TheCoursesScreen(
+                      courseLessons: course.content,
+                      courseName: course.name,
+                      courseId: course.id,
+                      courseLabel: course.label,
+                      icon: AppStyles.courseResources[course.name]?['image'],
+                      color: AppStyles.courseResources[course.name]?['color'],
+                    ),
+                  ),
+                );
+              },
+              child: _courseCard(
+                height,
+                width,
+                course.name,
+                course.label,
+                AppStyles.courseResources[course.name]?['image'],
+                _progressController.getCourseProgress(
+                    course.id, course.content.length),
+                AppStyles.courseResources[course.name]?['color'],
+              ),
             ),
           );
         },
@@ -401,7 +301,6 @@ class Homescreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                // Spacer(),
                 Padding(
                   padding:
                       EdgeInsets.only(right: width * 0.03, left: width * 0.02),
@@ -423,10 +322,6 @@ class Homescreen extends StatelessWidget {
       CourseController _courseController) {
     return GestureDetector(
       onTap: () {
-        print("user add courses: ${_courseController.userCourses}");
-        print(
-            "=========================================================================");
-        print("avalible courses: ${_courseController.availableCourses}");
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => AddCourseScreen()));
       },
@@ -458,6 +353,47 @@ class Homescreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Future<bool?> _showDeleteDialog(BuildContext context,
+      CourseController _courseController, String courseId) {
+    return showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(
+            'Delete Course 💀',
+            style: AppStyles.bold20(AppStyles.blackColor),
+          ),
+          content: Text('Are you sure you want to delete this course?',
+              textAlign: TextAlign.center,
+              style: AppStyles.regular16(AppStyles.blackColor)),
+          actions: [
+            // "No" button
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(
+                "No",
+                style: AppStyles.bold15(AppStyles.blackColor),
+              ),
+            ),
+            // "Yes" button
+            CupertinoDialogAction(
+              isDefaultAction: true, // Indicate default action
+              onPressed: () {
+                _courseController.deleteCourse(courseId);
+                Navigator.pop(context, true);
+              }, // Close dialog and return true (delete)
+              child: Text(
+                "Yes",
+                style: AppStyles.bold15(AppStyles.blackColor),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

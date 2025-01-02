@@ -12,8 +12,7 @@ class AddCourseScreen extends StatelessWidget {
     final Size size = MediaQuery.of(context).size;
     final double width = size.width;
     final double height = size.height;
-    final _courseController =
-        Provider.of<CourseController>(context);
+    final _courseController = Provider.of<CourseController>(context);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -54,7 +53,8 @@ class AddCourseScreen extends StatelessWidget {
                                     onPressed: () {
                                       _courseController.addCourse(
                                           _courseController
-                                              .availableCourses[index]);
+                                              .availableCourses[index],
+                                          context);
                                     },
                                   ),
                                 ],

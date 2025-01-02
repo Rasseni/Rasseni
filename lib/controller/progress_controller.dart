@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
+import 'course_controller.dart';
+
 class ProgressController extends ChangeNotifier {
   Map<String, List<bool>> courseProgress = {};
   Map<String, int> currentSteps = {};
@@ -147,5 +149,29 @@ class ProgressController extends ChangeNotifier {
       print(
           "Invalid step range - currentStep: $currentStep for courseId $courseId");
     }
+  }
+
+  List<Map<String, dynamic>> getTopCourses(CourseController courseController,
+      ProgressController progressController) {
+    final List<Map<String, dynamic>> topCourses = [];
+
+    // Assuming userCourses contains the courses the user is enrolled in
+    for (var course in courseController.userCourses) {
+      final progress = progressController.getCourseProgress(
+          course.id, course.content.length);
+      topCourses.add({
+        'id': course.id,
+        'title': course.name,
+        'subtitle': course.label,
+        'progress': progress,
+        'icon': course.image,
+      });
+    }
+
+    // Sort courses by progress in descending order
+    topCourses.sort((a, b) => b['progress'].compareTo(a['progress']));
+
+    // Return the top 3 courses
+    return topCourses.toList();
   }
 }

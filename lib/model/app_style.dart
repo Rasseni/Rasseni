@@ -24,7 +24,6 @@ class AppStyles {
       fontSize: 96,
       fontFamily: 'IBM Plex Sans',
       fontWeight: FontWeight.w700);
-
   static TextStyle bold64(Color c) => TextStyle(
       color: c,
       fontSize: 64,
@@ -53,6 +52,11 @@ class AppStyles {
   static TextStyle bold20(Color c) => TextStyle(
       color: c,
       fontSize: 20,
+      fontFamily: 'IBM Plex Sans',
+      fontWeight: FontWeight.w700);
+  static TextStyle bold18(Color c) => TextStyle(
+      color: c,
+      fontSize: 18,
       fontFamily: 'IBM Plex Sans',
       fontWeight: FontWeight.w700);
   static TextStyle bold15(Color c) => TextStyle(
@@ -126,6 +130,11 @@ class AppStyles {
   static TextStyle regular14(Color c) => TextStyle(
       color: c,
       fontSize: 14,
+      fontFamily: 'IBM Plex Sans',
+      fontWeight: FontWeight.w400);
+  static TextStyle regular12(Color c) => TextStyle(
+      color: c,
+      fontSize: 12,
       fontFamily: 'IBM Plex Sans',
       fontWeight: FontWeight.w400);
   static TextStyle regular10(Color c) => TextStyle(
